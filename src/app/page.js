@@ -41,7 +41,7 @@ function Notification({
         readed ? styles.notification : styles.notificationNotReaded
       }
     >
-      <Image className={styles.profil} src={profil} width={40} height={40} />
+      <Image alt="profil" className={styles.profil} src={profil} width={40} height={40} />
       <div className={styles.infos}>
         <p className={styles.message}>
           <span className={styles.name}>{name}</span>
@@ -53,7 +53,7 @@ function Notification({
         {privateMessage && <PrivateMessage text={privateMessage} />}
       </div>
       {media && (
-        <Image className={styles.media} src={media} width={50} height={50} />
+        <Image alt="media" className={styles.media} src={media} width={50} height={50} />
       )}
     </section>
   );
