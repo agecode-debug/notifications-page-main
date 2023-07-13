@@ -1,17 +1,26 @@
+"use client"
+
 import Image from "next/image";
 import styles from "./page.module.css";
+import { useState } from 'react';
 
 export default function Page() {
+  const [readedList, setReadedList] = useState([false, false, false, true, true, true, true])
+
+  function handleClick() {
+    setReadedList(Array(readedList.length).fill(true))
+  }
+
   return (
     <main>
-      <div className="top">
-        <div className="label">
-          <h5>Notifications</h5>
-          <label className="counter">3</label>
+      <div className={styles.top}>
+        <div className={styles.label}>
+          <h2 className={styles.title}>Notifications</h2>
+          <label className={styles.counter}>{readedList.filter(e => !e).length}</label>
         </div>
-        <button className="filter">Mark all as read</button>
+        <button onClick={handleClick} className={styles.filter}>Mark all as read</button>
       </div>
-      <NotificationList />
+      <NotificationList readedList={readedList}/>
     </main>
   );
 }
@@ -27,32 +36,38 @@ function Notification({
   linked,
 }) {
   return (
-    <div className="notification">
-      <Image src={profil} width={50} height={50} />
-      <div className="infos">
-        <div className="message">
-          <strong>{name}</strong>
-          {message}
+    <section
+      className={
+        readed ? styles.notification : styles.notificationNotReaded
+      }
+    >
+      <Image className={styles.profil} src={profil} width={40} height={40} />
+      <div className={styles.infos}>
+        <p className={styles.message}>
+          <span className={styles.name}>{name}</span>
+          <span>{message}</span>
           {linked && <LinkedElement element={linked} />}
-          {readed && <div className="not-readed"></div>}
-        </div>
-        <p className="sentTime">{sentTime} ago</p>
+          {!readed && <i className={styles.iconNotReaded}></i>}
+        </p>
+        <p className={styles.sentTime}>{sentTime} ago</p>
+        {privateMessage && <PrivateMessage text={privateMessage} />}
       </div>
-      {media && <Image src={media} width={50} height={50} />}
-      {privateMessage && <PrivateMessage text={privateMessage} />}
-    </div>
+      {media && (
+        <Image className={styles.media} src={media} width={50} height={50} />
+      )}
+    </section>
   );
 }
 
-function NotificationList() {
+function NotificationList({ readedList }) {
   return (
-    <div className="list">
+    <div className={styles.list}>
       <Notification
         profil="/avatar-mark-webber.webp"
         name="Mark Webber"
         sentTime="1m"
         message="reacted to your recent post"
-        readed="false"
+        readed={readedList[0]}
         linked={{
           name: "My first tournament today!",
           type: "post",
@@ -63,14 +78,14 @@ function NotificationList() {
         name="Angela Gray"
         sentTime="5m"
         message="followed you"
-        readed="false"
+        readed={readedList[1]}
       />
       <Notification
         profil="/avatar-jacob-thompson.webp"
         name="Jacob Thompson"
         sentTime="1 day"
         message="has joined your group"
-        readed="true"
+        readed={readedList[2]}
         linked={{
           name: "Chess Club",
           type: "group",
@@ -81,7 +96,7 @@ function NotificationList() {
         name="Rizky Hasanuddin"
         sentTime="5 days"
         message="sent you a private message"
-        readed="true"
+        readed={readedList[3]}
         privateMessage="Hello, thanks for setting up the Chess Club. I've been a member for a few weeks now and 
   I'm already having lots of fun and improving my game."
       />
@@ -90,7 +105,7 @@ function NotificationList() {
         name="Kimberly Smith"
         sentTime="1 week"
         message="commented on your picture"
-        readed="true"
+        readed={readedList[4]}
         media="/image-chess.webp"
       />
       <Notification
@@ -98,7 +113,7 @@ function NotificationList() {
         name="Nathan Peterson"
         sentTime="2 weeks"
         message="reacted to your recent post"
-        readed="true"
+        readed={readedList[5]}
         linked={{
           name: "5 end-game strategies to increase your win rate",
           type: "post",
@@ -109,11 +124,10 @@ function NotificationList() {
         name="Anna Kim"
         sentTime="2 weeks"
         message="left the group"
-        readed=""
-        media="/image-chess.webp"
+        readed={readedList[6]}
         linked={{
           name: "Chess Club",
-          type: "club",
+          type: "group",
         }}
       />
     </div>
@@ -121,9 +135,9 @@ function NotificationList() {
 }
 
 function PrivateMessage({ text }) {
-  return <p className="privateMessage">{text}</p>;
+  return <p className={styles.privateMessage}>{text}</p>;
 }
 
 function LinkedElement({ element }) {
-  return <strong className={`linked-${element.type}`}>{element.name}</strong>;
+  return <span className={styles[`linked-${element.type}`]}>{element.name}</span>;
 }
